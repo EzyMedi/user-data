@@ -1,11 +1,9 @@
 package com.EzyMedi.user.data.controller;
 
-import com.EzyMedi.user.data.model.Doctor;
-import com.EzyMedi.user.data.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.EzyMedi.
+
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +11,9 @@ import java.util.UUID;
 public class DoctorController {
     @Autowired
     private DoctorRepository doctorRepository;
+    @Autowired
+    private DoctorService doctorService;
+
     // Create doctor
     @PostMapping("/doctor")
     public Doctor createDoctor(@RequestBody Doctor doctor) {
@@ -69,8 +70,15 @@ public class DoctorController {
             return ResponseEntity.badRequest().body("Doctor is already following this doctor.");
         }
     }
-    @PostMapping("/notify-all-followers")
-    public ResponseEntity<String> notifyAllFollowers(@RequestBody News news) {
 
+    @GetMapping("/doctor/{doctorId}/doctor-followers")
+    public ResponseEntity<?> getDoctorFollowers(@PathVariable UUID doctorId) {
+        return doctorService.getDoctorFollowers(doctorId);
+    }
+
+    @GetMapping("/doctor/{doctorId}/patient-followers")
+    public ResponseEntity<?> getPatientFollowers(@PathVariable UUID doctorId){
+        return doctorService.getPatientFollowers(doctorId);
+    }
 
 }

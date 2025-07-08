@@ -1,9 +1,5 @@
 package com.EzyMedi.user.data.controller;
 
-import com.EzyMedi.user.data.model.Doctor;
-import com.EzyMedi.user.data.model.Patient;
-import com.EzyMedi.user.data.repository.DoctorRepository;
-import com.EzyMedi.user.data.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
