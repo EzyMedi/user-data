@@ -1,4 +1,4 @@
-package com.EzyMedi.userData;
+package com.EzyMedi.user.data;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

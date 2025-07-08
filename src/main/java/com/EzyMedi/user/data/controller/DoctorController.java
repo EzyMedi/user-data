@@ -1,11 +1,11 @@
-package com.EzyMedi.userData.controller;
+package com.EzyMedi.user.data.controller;
 
-import com.EzyMedi.userData.model.Doctor;
-import com.EzyMedi.userData.repository.DoctorRepository;
+import com.EzyMedi.user.data.model.Doctor;
+import com.EzyMedi.user.data.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.EzyMedi.
 import java.util.List;
 import java.util.UUID;
 
@@ -69,15 +69,8 @@ public class DoctorController {
             return ResponseEntity.badRequest().body("Doctor is already following this doctor.");
         }
     }
-    // notify patients about new news post
-//    @PostMapping("patient/notify-all")
-//    public ResponseEntity<String> notifyAllUsers(@RequestBody String message) {
-//        List<Patient> patients = patientRepository.findAll();
-//        for (Patient patient : patients) {
-//            if (patient.getSubscribe() == true) {
-//                System.out.println("Notifying " + patient.getFullName() + ": " + message);
-//            }
-//        }
-//        return ResponseEntity.ok(message);
-//    }
+    @PostMapping("/notify-all-followers")
+    public ResponseEntity<String> notifyAllFollowers(@RequestBody News news) {
+
+
 }

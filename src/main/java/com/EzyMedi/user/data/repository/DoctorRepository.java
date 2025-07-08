@@ -1,6 +1,6 @@
-package com.EzyMedi.userData.repository;
+package com.EzyMedi.user.data.repository;
 
-import com.EzyMedi.userData.model.Doctor;
+import com.EzyMedi.user.data.model.Doctor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.UUID;

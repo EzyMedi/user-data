@@ -1,4 +1,4 @@
-package com.EzyMedi.userData.model;
+package com.EzyMedi.user.data.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

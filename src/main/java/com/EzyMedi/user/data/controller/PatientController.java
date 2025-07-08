@@ -1,9 +1,9 @@
-package com.EzyMedi.userData.controller;
+package com.EzyMedi.user.data.controller;
 
-import com.EzyMedi.userData.model.Doctor;
-import com.EzyMedi.userData.model.Patient;
-import com.EzyMedi.userData.repository.DoctorRepository;
-import com.EzyMedi.userData.repository.PatientRepository;
+import com.EzyMedi.user.data.model.Doctor;
+import com.EzyMedi.user.data.model.Patient;
+import com.EzyMedi.user.data.repository.DoctorRepository;
+import com.EzyMedi.user.data.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +68,5 @@ public class PatientController {
             return ResponseEntity.badRequest().body("Patient already subscribed to this doctor.");
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package com.EzyMedi.userData.model;
+package com.EzyMedi.user.data.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,6 +23,8 @@ public class Doctor {
     private String phone;
     @Column
     private String experience;
+    @Column
+    private String address;
     // Doctors followed by this doctor
     @ManyToMany
     @JoinTable(

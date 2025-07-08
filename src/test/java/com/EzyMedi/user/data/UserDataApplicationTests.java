@@ -1,4 +1,4 @@
-package com.EzyMedi.userData;
+package com.EzyMedi.user.data;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
