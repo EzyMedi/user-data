@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 public class UserController {
     @Autowired
     private UserService userService;
@@ -34,21 +34,21 @@ public class UserController {
 
     // Get a user by ID
     @GetMapping("user/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable UUID userId) {
+    public User getUserById(@PathVariable UUID userId) {
         return userService.getUserById(userId);
     }
 
     //Delete user
     @DeleteMapping("user/{userId}")
-    public void deleteUser(@PathVariable UUID id) {
-        userService.deleteUser(id);
+    public void deleteUser(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
     }
     @PostMapping("user/{userId}/follow/{toFollowId}")
     public ResponseEntity<String> follow(@PathVariable UUID userId, @PathVariable UUID toFollowId) {
         return userService.follow(userId, toFollowId);
     }
 
-    @PostMapping("user/{userId}/follow/{toUnfollowId}")
+    @PostMapping("user/{userId}/unfollow/{toUnfollowId}")
     public ResponseEntity<String> unfollow(@PathVariable UUID userId, @PathVariable UUID toUnfollowId) {
         return userService.unfollow(userId, toUnfollowId);
     }

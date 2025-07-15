@@ -32,10 +32,8 @@ public class UserService {
         return userRepository.findAllUsersByRole(Role.PATIENT);
     }
 
-    public ResponseEntity<User> getUserById(UUID id) {
-        return userRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public User getUserById(UUID id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public ResponseEntity<User> updateUser(UUID id, User updatedUser) {
