@@ -39,8 +39,22 @@ public class UserController {
     }
 
     //Delete user
-    @DeleteMapping("patient/{patientId}")
+    @DeleteMapping("user/{userId}")
     public void deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
+    }
+    @PostMapping("user/{userId}/follow/{toFollowId}")
+    public ResponseEntity<String> follow(@PathVariable UUID userId, @PathVariable UUID toFollowId) {
+        return userService.follow(userId, toFollowId);
+    }
+
+    @PostMapping("user/{userId}/follow/{toUnfollowId}")
+    public ResponseEntity<String> unfollow(@PathVariable UUID userId, @PathVariable UUID toUnfollowId) {
+        return userService.unfollow(userId, toUnfollowId);
+    }
+
+    @PostMapping("user/{userId}/getFollowers")
+    public List<User> getFollowers(@PathVariable UUID userId) {
+        return userService.getFollowers(userId);
     }
 }
