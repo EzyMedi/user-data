@@ -53,7 +53,7 @@ public class UserController {
         return userService.unfollow(userId, toUnfollowId);
     }
 
-    @PostMapping("user/{userId}/getFollowers")
+    @PostMapping("user/getFollowers/{userId}")
     public List<User> getFollowers(@PathVariable UUID userId) {
         return userService.getFollowers(userId);
     }

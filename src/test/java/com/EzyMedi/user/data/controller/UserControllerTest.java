@@ -142,7 +142,7 @@ public class UserControllerTest {
 
         when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(follower));
 
-        mockMvc.perform(post("/user/" + mockDoctor.getUserId() + "/getFollowers"))
+        mockMvc.perform(post("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].fullName").value("Follower One"));
     }
