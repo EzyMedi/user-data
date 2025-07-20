@@ -11,49 +11,61 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
     // Create doctor
-    @PostMapping("/user")
+    @PostMapping("/create")
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
     // Get all doctors
-    @GetMapping("/user/doctors")
+    @GetMapping("/doctors/get")
     public List<User> getAllDoctors() {
         return userService.getAllDoctors();
     }
 
     // Get all patients
-    @GetMapping("/user/patients")
+    @GetMapping("/patients/get")
     public List<User> getAllPatients() {
         return userService.getAllPatients();
     }
 
+    @GetMapping("/get")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
     // Get a user by ID
-    @GetMapping("user/{userId}")
+    @GetMapping("/{userId}/get")
     public User getUserById(@PathVariable UUID userId) {
         return userService.getUserById(userId);
     }
 
     //Delete user
-    @DeleteMapping("user/{userId}")
+    @DeleteMapping("/{userId}/delete")
     public void deleteUser(@PathVariable UUID userId) {
         userService.deleteUser(userId);
     }
-    @PostMapping("user/{userId}/follow/{toFollowId}")
+    //Update user
+    @PutMapping("/{id}/update")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User updatedUser) {
+        return userService.updateUser(id, updatedUser);
+    }
+
+    @PostMapping("/{userId}/follow/{toFollowId}")
     public ResponseEntity<String> follow(@PathVariable UUID userId, @PathVariable UUID toFollowId) {
         return userService.follow(userId, toFollowId);
     }
 
-    @PostMapping("user/{userId}/unfollow/{toUnfollowId}")
+    @PostMapping("/{userId}/unfollow/{toUnfollowId}")
     public ResponseEntity<String> unfollow(@PathVariable UUID userId, @PathVariable UUID toUnfollowId) {
         return userService.unfollow(userId, toUnfollowId);
     }
 
-    @PostMapping("user/getFollowers/{userId}")
+    @GetMapping("/getFollowers/{userId}")
     public List<User> getFollowers(@PathVariable UUID userId) {
         return userService.getFollowers(userId);
     }

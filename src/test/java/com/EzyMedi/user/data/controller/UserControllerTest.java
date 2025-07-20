@@ -54,7 +54,7 @@ public class UserControllerTest {
     void testCreateUser() throws Exception {
         when(userService.createUser(any(User.class))).thenReturn(mockDoctor);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/user/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(mockDoctor)))
                 .andExpect(status().isOk())
@@ -64,10 +64,20 @@ public class UserControllerTest {
     }
 
     @Test
+    void testGetAllUsers() throws Exception {
+        when(userService.getAllUsers()).thenReturn(List.of(mockDoctor));
+
+        mockMvc.perform(get("/user/get"))
+                .andExpect(status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].fullName").value("Test Doctor"));
+    }
+
+    @Test
     void testGetAllDoctors() throws Exception {
         when(userService.getAllDoctors()).thenReturn(List.of(mockDoctor));
 
-        mockMvc.perform(get("/user/doctors"))
+        mockMvc.perform(get("/user/doctors/get"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].fullName").value("Test Doctor"));
     }
@@ -86,23 +96,67 @@ public class UserControllerTest {
 
         when(userService.getAllPatients()).thenReturn(List.of(patient));
 
-        mockMvc.perform(get("/user/patients"))
+        mockMvc.perform(get("/user/patients/get"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].fullName").value("Test Patient"));
+    }
+
+    @Test
+    void testUpdateUser() throws Exception {
+        UUID userId = mockDoctor.getUserId();
+
+        User updatedInfo = new User();
+        updatedInfo.setFullName("Updated Name");
+
+        User updatedUser = new User();
+        updatedUser.setUserId(userId);
+        updatedUser.setFullName("Updated Name");
+        updatedUser.setGender(mockDoctor.getGender());
+        updatedUser.setEmail(mockDoctor.getEmail());
+        updatedUser.setPhone(mockDoctor.getPhone());
+        updatedUser.setRole(mockDoctor.getRole());
+        updatedUser.setFollowing(new ArrayList<>());
+        updatedUser.setFollowers(new ArrayList<>());
+
+        when(userService.updateUser(eq(userId), any(User.class)))
+                .thenReturn(ResponseEntity.ok(updatedUser));
+
+        mockMvc.perform(put("/user/" + userId + "/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedInfo)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Updated Name"))
+                .andExpect(jsonPath("$.email").value("test@example.com"));
+    }
+
+    @Test
+    void testUpdateUser_NotFound() throws Exception {
+        UUID userId = UUID.randomUUID();
+
+        User updatedInfo = new User();
+        updatedInfo.setFullName("Updated Name");
+
+        when(userService.updateUser(eq(userId), any(User.class)))
+                .thenReturn(ResponseEntity.notFound().build());
+
+        mockMvc.perform(put("/user/" + userId + "/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedInfo)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void testGetUserById() throws Exception {
         when(userService.getUserById(mockDoctor.getUserId())).thenReturn(mockDoctor);
 
-        mockMvc.perform(get("/user/" + mockDoctor.getUserId()))
+        mockMvc.perform(get("/user/" + mockDoctor.getUserId() + "/get"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
     void testDeleteUser() throws Exception {
-        mockMvc.perform(delete("/user/" + mockDoctor.getUserId()))
+        mockMvc.perform(delete("/user/" + mockDoctor.getUserId() + "/delete"))
                 .andExpect(status().isOk());
     }
 
@@ -142,7 +196,7 @@ public class UserControllerTest {
 
         when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(follower));
 
-        mockMvc.perform(post("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
+        mockMvc.perform(get("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].fullName").value("Follower One"));
     }

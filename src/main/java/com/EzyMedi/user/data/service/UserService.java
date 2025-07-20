@@ -24,6 +24,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public List<User> getAllDoctors() {
         return userRepository.findAllUsersByRole(Role.DOCTOR);
     }
@@ -63,6 +67,7 @@ public class UserService {
         // Check if the doctor is already subscribed
         if (!user.getFollowing().contains(toFollow)) {
             user.addFollower(toFollow);
+            userRepository.save(user);
             return ResponseEntity.ok("User follow successfully.");
         } else {
             return ResponseEntity.badRequest().body("User already followed.");
@@ -80,6 +85,7 @@ public class UserService {
         // Check if the doctor is already subscribed
         if (user.getFollowing().contains(toUnfollow)) {
             user.removeFollower(toUnfollow);
+            userRepository.save(user);
             return ResponseEntity.ok("User unfollow successfully.");
         } else {
             return ResponseEntity.badRequest().body("User not follow this person.");
