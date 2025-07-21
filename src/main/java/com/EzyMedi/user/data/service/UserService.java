@@ -1,17 +1,19 @@
 package com.EzyMedi.user.data.service;
 
 import com.EzyMedi.user.data.constants.Role;
+import com.EzyMedi.user.data.dto.UserDTO;
 import com.EzyMedi.user.data.model.User;
 import com.EzyMedi.user.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 
@@ -91,12 +93,21 @@ public class UserService {
             return ResponseEntity.badRequest().body("User not follow this person.");
         }
     }
-    public List<User> getFollowers(UUID userId) {
+    public List<UserDTO> getFollowers(UUID userId) {
         User user = userRepository.findById(userId).orElse(null);
-        if (user == null ) {
-            return emptyList();
+        if (user == null) {
+            return Collections.emptyList();
         }
-        return user.getFollowers();
+
+        return user.getFollowers()
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
+    public UserDTO convertToDto (User user){
+        return new UserDTO(user.getUserId(),user.getFullName(),user.getGender(),user.getEmail(),user.getPhone(),user.getRole());
     }
 
 }

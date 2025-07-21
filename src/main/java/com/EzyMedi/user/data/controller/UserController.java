@@ -1,5 +1,6 @@
 package com.EzyMedi.user.data.controller;
 
+import com.EzyMedi.user.data.dto.UserDTO;
 import com.EzyMedi.user.data.model.User;
 import com.EzyMedi.user.data.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("/getFollowers/{userId}")
-    public List<User> getFollowers(@PathVariable UUID userId) {
+    public List<UserDTO> getFollowers(@PathVariable UUID userId) {
         return userService.getFollowers(userId);
     }
 }

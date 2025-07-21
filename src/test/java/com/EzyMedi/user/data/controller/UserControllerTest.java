@@ -1,6 +1,7 @@
 package com.EzyMedi.user.data.controller;
 
 import com.EzyMedi.user.data.constants.Role;
+import com.EzyMedi.user.data.dto.UserDTO;
 import com.EzyMedi.user.data.model.User;
 import com.EzyMedi.user.data.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -184,20 +185,38 @@ public class UserControllerTest {
                 .andExpect(content().string("Unfollowed successfully"));
     }
 
-    @Test
-    void testGetFollowers() throws Exception {
-        User follower = new User();
-        follower.setUserId(UUID.randomUUID());
-        follower.setFullName("Follower One");
-        follower.setGender("Female");
-        follower.setEmail("follower@example.com");
-        follower.setPhone("09099090");
-        follower.setRole(Role.PATIENT);
+//    @Test
+//    void testGetFollowers() throws Exception {
+//        User follower = new User();
+//        follower.setUserId(UUID.randomUUID());
+//        follower.setFullName("Follower One");
+//        follower.setGender("Female");
+//        follower.setEmail("follower@example.com");
+//        follower.setPhone("09099090");
+//        follower.setRole(Role.PATIENT);
+//
+//        when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(follower));
+//
+//        mockMvc.perform(get("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].fullName").value("Follower One"));
+//    }
+@Test
+void testGetFollowers() throws Exception {
+    UserDTO followerDto = new UserDTO();
+    followerDto.setUserId(UUID.randomUUID());
+    followerDto.setFullName("Follower One");
+    followerDto.setGender("Female");
+    followerDto.setEmail("follower@example.com");
+    followerDto.setPhone("09099090");
+    followerDto.setRole(Role.PATIENT);
 
-        when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(follower));
+    when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(followerDto));
 
-        mockMvc.perform(get("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].fullName").value("Follower One"));
-    }
+    mockMvc.perform(get("/user/getFollowers/" + mockDoctor.getUserId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].fullName").value("Follower One"))
+            .andExpect(jsonPath("$[0].email").value("follower@example.com"));
+}
+
 }
