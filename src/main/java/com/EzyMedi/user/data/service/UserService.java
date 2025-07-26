@@ -65,7 +65,9 @@ public class UserService {
         if (user == null || toFollow == null) {
             return ResponseEntity.notFound().build();
         }
-
+        if (userId == toFollowId) {
+            return ResponseEntity.badRequest().body("User can't follow himself.");
+        }
         // Check if the doctor is already subscribed
         if (!user.getFollowing().contains(toFollow)) {
             user.addFollower(toFollow);

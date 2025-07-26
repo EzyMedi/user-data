@@ -174,6 +174,18 @@ public class UserControllerTest {
     }
 
     @Test
+    void testFollowHimself() throws Exception {
+        UUID toFollowId = mockDoctor.getUserId();
+
+        when(userService.follow(mockDoctor.getUserId(), toFollowId))
+                .thenReturn(ResponseEntity.badRequest().body("User can't follow himself."));
+
+        mockMvc.perform(post("/user/" + mockDoctor.getUserId() + "/follow/" + toFollowId))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("User can't follow himself."));
+    }
+
+    @Test
     void testUnfollowUser() throws Exception {
         UUID toUnfollowId = UUID.randomUUID();
 
@@ -185,22 +197,7 @@ public class UserControllerTest {
                 .andExpect(content().string("Unfollowed successfully"));
     }
 
-//    @Test
-//    void testGetFollowers() throws Exception {
-//        User follower = new User();
-//        follower.setUserId(UUID.randomUUID());
-//        follower.setFullName("Follower One");
-//        follower.setGender("Female");
-//        follower.setEmail("follower@example.com");
-//        follower.setPhone("09099090");
-//        follower.setRole(Role.PATIENT);
-//
-//        when(userService.getFollowers(mockDoctor.getUserId())).thenReturn(List.of(follower));
-//
-//        mockMvc.perform(get("/user/" + "getFollowers/" + mockDoctor.getUserId() ))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].fullName").value("Follower One"));
-//    }
+
 @Test
 void testGetFollowers() throws Exception {
     UserDTO followerDto = new UserDTO();
