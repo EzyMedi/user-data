@@ -17,13 +17,7 @@ import java.util.UUID;
 public class UserDTO {
     private UUID userId;
 
-    private String fullName;
-
-    private String gender;
-
     private String email;
-
-    private String phone;
 
     private Role role;
 }

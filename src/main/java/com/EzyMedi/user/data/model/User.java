@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "app_user")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -18,22 +22,17 @@ import java.util.UUID;
 )
 public class User {
     @Id
-    @GeneratedValue
     private UUID userId;
-
-    @Column
-    private String fullName;
 
     @Column
     private String gender;
 
-    @Column
+    @Column(unique = true, length = 100)
     private String email;
 
     @Column
     private String phone;
 
-    @Column
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -48,6 +47,10 @@ public class User {
     @ManyToMany(mappedBy = "followers")
     private List<User> following;
 
+    public User(UUID userId, Role role) {
+        this.userId = userId;
+        this.role = role;
+    }
     public void addFollower(User toFollow) {
         following.add(toFollow);
         toFollow.getFollowers().add(this);

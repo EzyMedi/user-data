@@ -1,25 +1,31 @@
 package com.EzyMedi.user.data.controller;
 
+import com.EzyMedi.user.data.constants.Role;
 import com.EzyMedi.user.data.dto.UserDTO;
 import com.EzyMedi.user.data.model.User;
+import com.EzyMedi.user.data.model.UserCredential;
 import com.EzyMedi.user.data.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
     @Autowired
     private UserService userService;
     // Create doctor
     @PostMapping("/create")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public ResponseEntity<String> createUser(@RequestBody UserCredential credential, @RequestParam Role role) {
+        log.info("Controller with role {}", role);
+        return userService.createUser(credential, role);
     }
 
     // Get all doctors
@@ -69,5 +75,23 @@ public class UserController {
     @GetMapping("/getFollowers/{userId}")
     public List<UserDTO> getFollowers(@PathVariable UUID userId) {
         return userService.getFollowers(userId);
+    }
+
+    @PostMapping("/")
+    public String greet(HttpServletRequest request) {
+        return "Welcome to Helen "+request.getSession().getId();
+    }
+
+    public CsrfToken getCsrfToken(HttpServletRequest request) {
+        CsrfToken token = (CsrfToken) request.getAttribute("_csrf");
+        return token;
+    }
+    @GetMapping("/csrf")
+    public CsrfToken getCsrfToken() {
+        return getCsrfToken(null);
+    }
+    @GetMapping("/csrf/header")
+    public CsrfToken getCsrfHeader(HttpServletRequest request) {
+        return (CsrfToken) request.getAttribute("_csrf");
     }
 }

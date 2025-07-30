@@ -3,27 +3,54 @@ package com.EzyMedi.user.data.service;
 import com.EzyMedi.user.data.constants.Role;
 import com.EzyMedi.user.data.dto.UserDTO;
 import com.EzyMedi.user.data.model.User;
+import com.EzyMedi.user.data.model.UserCredential;
+import com.EzyMedi.user.data.repository.UserCredentialRepository;
 import com.EzyMedi.user.data.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
-
 @Service
+@Slf4j
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserCredentialRepository userCredentialRepository;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public ResponseEntity<String> createUser(UserCredential credential, Role role) {
+        try {
+            // Optional: check if the user credential already exists
+            if (userCredentialRepository.existsByAccountName(credential.getAccountName())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("User already exists");
+            }
+//            String passwordBefore = credential.getPasswordHash();
+//            credential.setPasswordHash(passwordEncoder.encode(passwordBefore));
+            log.info("Saving credential to db: {}", credential.getAccountName());
+            userCredentialRepository.save(credential);
+
+            User user = new User(credential.getCredentialId(), role);
+            userRepository.save(user);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("User created successfully");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("User creation failed: " + e.getMessage());
+        }
     }
 
     public List<User> getAllUsers() {
@@ -45,9 +72,7 @@ public class UserService {
     public ResponseEntity<User> updateUser(UUID id, User updatedUser) {
         return userRepository.findById(id)
                 .map(existing -> {
-                    if (updatedUser.getFullName() != null) existing.setFullName(updatedUser.getFullName());
                     if (updatedUser.getGender() != null) existing.setGender(updatedUser.getGender());
-                    if (updatedUser.getEmail() != null) existing.setEmail(updatedUser.getEmail());
                     if (updatedUser.getPhone() != null) existing.setPhone(updatedUser.getPhone());
                     return ResponseEntity.ok(userRepository.save(existing));
                 })
@@ -109,7 +134,7 @@ public class UserService {
 
 
     public UserDTO convertToDto (User user){
-        return new UserDTO(user.getUserId(),user.getFullName(),user.getGender(),user.getEmail(),user.getPhone(),user.getRole());
+        return new UserDTO(user.getUserId(),user.getEmail(),user.getRole());
     }
 
 }
