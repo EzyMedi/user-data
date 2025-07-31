@@ -27,7 +27,10 @@ public class UserController {
         log.info("Controller with role {}", role);
         return userService.createUser(credential, role);
     }
-
+    @PostMapping("/login")
+    public String login(@RequestBody UserCredential credential){
+        return userService.login(credential);
+    }
     // Get all doctors
     @GetMapping("/doctors/get")
     public List<User> getAllDoctors() {
@@ -77,7 +80,7 @@ public class UserController {
         return userService.getFollowers(userId);
     }
 
-    @PostMapping("/")
+    @GetMapping("/")
     public String greet(HttpServletRequest request) {
         return "Welcome to Helen "+request.getSession().getId();
     }
@@ -86,12 +89,5 @@ public class UserController {
         CsrfToken token = (CsrfToken) request.getAttribute("_csrf");
         return token;
     }
-    @GetMapping("/csrf")
-    public CsrfToken getCsrfToken() {
-        return getCsrfToken(null);
-    }
-    @GetMapping("/csrf/header")
-    public CsrfToken getCsrfHeader(HttpServletRequest request) {
-        return (CsrfToken) request.getAttribute("_csrf");
-    }
+
 }

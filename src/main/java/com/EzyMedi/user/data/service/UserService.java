@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +29,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private UserCredentialRepository userCredentialRepository;
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     public ResponseEntity<String> createUser(UserCredential credential, Role role) {
         try {
@@ -36,8 +41,7 @@ public class UserService {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("User already exists");
             }
-//            String passwordBefore = credential.getPasswordHash();
-//            credential.setPasswordHash(passwordEncoder.encode(passwordBefore));
+            credential.setPasswordHash(passwordEncoder.encode(credential.getPasswordHash()));
             log.info("Saving credential to db: {}", credential.getAccountName());
             userCredentialRepository.save(credential);
 
@@ -53,6 +57,15 @@ public class UserService {
         }
     }
 
+    public String login(UserCredential credential){
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(credential.getAccountName(),
+                                credential.getPasswordHash()));
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "Invalid username or password";
+        }
+        return "Success";
+    }
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
