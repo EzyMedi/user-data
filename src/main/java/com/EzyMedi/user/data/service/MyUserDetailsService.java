@@ -14,8 +14,8 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserCredentialRepository userCredentialRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserCredential userCredential = userCredentialRepository.findByAccountName(username);
+    public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
+        UserCredential userCredential = userCredentialRepository.findByAccountName(accountName);
         if (userCredential == null) {
             System.out.println("User not found");
             throw new UsernameNotFoundException("User not found");

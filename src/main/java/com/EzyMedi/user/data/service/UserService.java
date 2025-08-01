@@ -44,8 +44,8 @@ public class UserService {
                         .body("User already exists");
             }
             credential.setPasswordHash(passwordEncoder.encode(credential.getPasswordHash()));
-            log.info("Saving credential to db: {}", credential.getAccountName());
             userCredentialRepository.save(credential);
+            log.info("Saving credential to db: {} with the id: {}", credential.getAccountName(), credential.getCredentialId());
 
             User user = new User(credential.getCredentialId(), role);
             userRepository.save(user);
