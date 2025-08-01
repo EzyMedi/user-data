@@ -33,6 +33,8 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     AuthenticationManager authenticationManager;
+    @Autowired
+    JWTService jwtService;
 
     public ResponseEntity<String> createUser(UserCredential credential, Role role) {
         try {
@@ -64,7 +66,7 @@ public class UserService {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "Invalid username or password";
         }
-        return "Success";
+        return jwtService.generateToken(credential.getAccountName());
     }
     public List<User> getAllUsers() {
         return userRepository.findAll();
