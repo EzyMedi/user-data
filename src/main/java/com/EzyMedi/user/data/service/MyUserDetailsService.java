@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserCredentialRepository userCredentialRepository;
+
+    @Autowired private UserCredentialRepository userCredentialRepository;
+
+    // Used by Spring Security to load user by username during authentication
     @Override
     public UserDetails loadUserByUsername(String accountName) throws UsernameNotFoundException {
         UserCredential userCredential = userCredentialRepository.findByAccountName(accountName);
@@ -20,6 +22,9 @@ public class MyUserDetailsService implements UserDetailsService {
             System.out.println("User not found");
             throw new UsernameNotFoundException("User not found");
         }
+
+        // Wrap into a UserPrincipal for Spring Security
         return new UserPrincipal(userCredential);
     }
 }
+

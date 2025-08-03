@@ -23,37 +23,48 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtFilter jwtFilter;
+    // Inject custom user details service and password encoder
+    @Autowired private UserDetailsService userDetailsService;
+    @Autowired private PasswordEncoder passwordEncoder;
 
+    // JWT filter to extract and validate tokens
+    @Autowired private JwtFilter jwtFilter;
+
+    // Main security filter chain config
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                // Disable CSRF since we use token-based auth
                 .csrf(AbstractHttpConfigurer::disable)
+
+                // Allow registration and login without auth
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("user/create","user/login")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                        .requestMatchers("user/create", "user/login").permitAll()
+                        .anyRequest().authenticated())
+
+                // Use basic auth if needed (not used with JWT here but required by Spring Security)
                 .httpBasic(Customizer.withDefaults())
+
+                // Stateless session: no session stored on server
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // Register our JWT filter before Spring's UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
+    // DAO-based auth provider, uses userDetailsService and passwordEncoder
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService); // ✅ no longer deprecated constructor
+        provider.setPasswordEncoder(passwordEncoder); // Password check during login
         return provider;
     }
 
+    // Retrieve the AuthenticationManager used to authenticate users
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
